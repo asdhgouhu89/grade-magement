@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>成绩管理系统</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">成绩管理系统</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if session.role == 'admin' or session.role == 'teacher' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('students') }}">学生管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('courses') }}">课程管理</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('grades') }}">成绩管理</a>
+                </li>
+                {% if session.role == 'admin' or session.role == 'teacher' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('statistics') }}">统计分析</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="navbar-nav ml-auto">
+            <span class="navbar-text mr-3">欢迎, {{ session.username }} ({{ session.role }})</span>
+            <a class="nav-link" href="{{ url_for('logout') }}">退出登录</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="jumbotron">
+            <h1 class="display-4">欢迎使用成绩管理系统</h1>
+            <p class="lead">这是一个基于Flask的成绩管理系统，支持学生管理、课程管理、成绩录入和统计分析等功能。</p>
+            <hr class="my-4">
+            <p>根据您的角色，您可以执行以下操作：</p>
+            <ul>
+                {% if session.role == 'admin' %}
+                    <li>管理学生信息（添加、修改、删除）</li>
+                    <li>管理课程信息（添加、修改、删除）</li>
+                    <li>管理成绩（录入、修改、删除）</li>
+                    <li>查看统计分析报告</li>
+                {% elif session.role == 'teacher' %}
+                    <li>管理成绩（录入、修改、删除）</li>
+                    <li>查看统计分析报告</li>
+                {% elif session.role == 'student' %}
+                    <li>查看个人成绩</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

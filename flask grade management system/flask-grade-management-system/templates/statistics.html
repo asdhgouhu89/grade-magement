@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>统计分析</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="{{ url_for('index') }}">成绩管理系统</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                {% if session.role == 'admin' or session.role == 'teacher' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('students') }}">学生管理</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('courses') }}">课程管理</a>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('grades') }}">成绩管理</a>
+                </li>
+                {% if session.role == 'admin' or session.role == 'teacher' %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('statistics') }}">统计分析</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="navbar-nav ml-auto">
+            <span class="navbar-text mr-3">欢迎, {{ session.username }} ({{ session.role }})</span>
+            <a class="nav-link" href="{{ url_for('logout') }}">退出登录</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <h2>成绩统计分析</h2>
+        
+        <div class="row">
+            {% for stat in course_stats %}
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>{{ stat.course.name }} ({{ stat.course.course_id }})</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>学生人数:</strong> {{ stat.student_count }}</p>
+                                <p><strong>平均分:</strong> {{ stat.avg_score }}</p>
+                                <p><strong>最高分:</strong> {{ stat.max_score }}</p>
+                                <p><strong>最低分:</strong> {{ stat.min_score }}</p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>优秀(90+):</strong> {{ stat.excellent }}人</p>
+                                <p><strong>良好(80-89):</strong> {{ stat.good }}人</p>
+                                <p><strong>中等(70-79):</strong> {{ stat.medium }}人</p>
+                                <p><strong>及格(60-69):</strong> {{ stat.pass }}人</p>
+                                <p><strong>不及格(&lt;60):</strong> {{ stat.fail }}人</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
